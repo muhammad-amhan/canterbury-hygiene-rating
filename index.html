@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<!--  
+    Completed on -> 12/12/2017
+-->
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <meta name="description" content="Ajax and jQuery calls to retirve JSON data">
+        <meta name="keywords" content="ajax, html, css, jquery">
+        <meta name="author" content="Muhammad Amhan">
+        <title>Canterbury Hygiene Rating</title>
+        <!-- Import Google font -->
+        <link href="https://fonts.googleapis.com/css?family=Titillium+Web" rel="stylesheet">
+        <!-- To save time -> I imported jQuery UI CSS stylesheet for the autocomplete features -->
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <!-- Internal Page Styling  -->
+
+        <style>
+            /* Global Style Declaration */
+            * {
+                box-sizing: border-box;
+            } 
+
+            body {
+                margin: 0;
+                padding: 0;
+                font-family: 'Titillium Web', arial, sans-serif;
+                background-color: #eee;
+                font-size: 16px;
+                color: #333;
+                position: relative;
+            }
+
+            h1, h2, h3, h4 {
+                margin: 0;
+            }
+
+            p {
+                margin: 0;
+            }
+
+            input {
+                outline: none;
+            }
+
+            .hr {
+                width: 80%;
+                background-color: #777;
+                height: 1px;
+                border: none;
+                opacity: .2;
+            }
+
+            /* Main container */
+            .container {
+                width: 80%;
+                margin: auto;
+            }
+
+            /* Page top header */
+            .header {
+                padding: 30px;
+                background-color: #fff;
+                color: #333;
+                margin-bottom: 30px;
+                box-shadow: 0px 2px 20px .1px #333;
+            }
+
+            .header .page-header {
+                width: 50%;
+                margin: auto;
+                text-align: center;
+            }
+
+            /* Page description (dummy text) */
+            .description .page-description {
+                padding: 10px;
+                background-color: #fff;
+                border: 1px solid #ccc;
+            }
+
+            /* pagination container */
+            .content .pagination {
+                width: 100%;
+                text-align: center;
+                margin: 30px 0;
+                padding: 10px;
+                background-color: #fff;
+                box-shadow: inset 100px 0px 100px -50px #eee, 
+                            inset -100px 0px 100px -50px #eee;
+            }
+
+            /* Table */
+            .data-table {
+                width: 100%;
+                margin: auto;
+                padding: 10px;
+            }
+
+            .data-table table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            /* Table headers */
+            .data-table table th {
+                text-align: left;
+                padding: 14px;
+                color: #fff;
+                background-color: #c0392b;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+            }
+
+            /* Adding stripes to every other row */
+            .data-table table tr:nth-child(even) {
+                background-color: #ddd;
+                border-bottom: 2px solid #ccc;
+            }
+
+            .data-table table tr:nth-child(odd) {
+                background-color: #fff;
+            }
+
+            .data-table table tr:nth-last-child() {
+                border-bottom: 2px solid #c0392b;
+            }
+
+            .data-table table td {
+                padding: 12px;
+            }
+
+            /* Fixing the table cells sizing issue on each new data set recall */
+            th:first-child {
+                width: 20%;
+            }
+
+            th:nth-child(2) {
+                width: 50%;
+            }
+
+            th:last-child() {
+                width: 20%;
+            }
+
+            /* Seaerch form */  
+            .searchForm {
+                width: 100%;
+                text-align: center;
+                margin: 30px 0 10px;
+            }
+
+            .searchForm .searchContent {
+                background-color: #eee;
+                margin: auto;
+                width: 400px;
+            }
+
+            .searchForm .searchContent .searchLabel {
+                display: block;
+                text-align: left;
+                padding-left: 5px;
+                margin-bottom: 10px;
+            }
+
+            .searchForm .searchContent .searchField {
+                width: 100%;
+                padding: 8px;
+                position: relative;
+            }
+            
+            /* input field focus */
+            .searchForm .searchContent .searchField:focus {
+                box-shadow: 0 0 5px 2px #2980b9;
+                border: 2px solid transparent;
+            }
+
+            /* Search error */
+            .searchError {
+                width: 270px;
+                height: 20px;
+                margin: auto;
+                text-align: center;
+                color: #c0392b;
+                font-weight: bold;
+            }
+
+            /* Buttons */
+            /* Global */
+            .btn {
+                background-color: #fff;
+                border: none;
+                outline: none;
+                padding: 10px;
+                border: 1px solid #ccc;
+            }
+
+            .btn:hover {
+                box-shadow: 0 3px 10px 1px #ccc;
+                transition: all .3s ease;
+            }
+
+            /* Pagination buttons */
+            .paginatorBtn {
+                width: 35px;
+                margin: 0 2px;
+                font-weight: bold;
+                border-radius: 6px;
+            }
+
+            /* Active class for pagination buttons for current page -> manipulated using jquery in the pagination script */
+            .active {
+                box-shadow: inset 0 0 10px 1px #ccc;
+            }
+
+            /* Search button */
+            .searchBtn {
+                display: inline-block;
+                width: 100%;
+                margin-top: 8px;
+            }
+
+            /* Main footer */
+            .footer {
+                height: 80px;
+                background-color: #2c3e50;
+                color: #fff;
+                text-align: center;
+                letter-spacing: 3px;
+                border-top: 3px solid orange;
+                margin-top: 40px;
+            }
+
+            /* Footer content */
+            .footer .footer-description {
+                padding-top: 25px;
+            }
+
+        </style>
+        <!-- End of stylesheet -->
+    </head>
+
+    <!-- Start of body -->
+    <body>
+        <!-- Page main header section -->
+        <header class="header">
+            <div class="container">
+                <div class="page-header">
+                    <h2>Canterbury Hygiene Rating Platform</h2>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page description section -->
+        <section class="description">
+            <div class="container">
+                <div class="page-description">
+                    <h4> What is this? </h4>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque tempor nisl purus, vel vestibulum mi tempus eu. Pellentesque hendrerit massa dolor, in facilisis ex dictum in. Mauris condimentum lorem id luctus aliquet. Morbi dapibus vel nibh eu laoreet.</p>
+                    <hr class="hr">
+                    <h4> Langauges used... </h4>
+                    <p>Donec suscipit in felis sed rhoncus. Proin vulputate dignissim velit a pellentesque. Aenean sed tellus vehicula, bibendum erat eget, gravida leo. </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main page content section -->
+        <section class="content">
+            <div class="container">
+                <!-- Pagination -->
+                <div class="pagination">
+                    <div id="paginationBtn"></div>
+                </div>
+                <div class="data-table">
+                    <!-- The table containing the data -->
+                    <table>
+                        <!-- Table headers -->
+                        <thead>
+                            <tr>
+                                <th>Business</th>
+                                <th>Address</th>
+                                <th>Hygene</th>
+                                <th colspan="2">Date</th>
+                            </tr>
+                        </thead>
+                        <!-- Table body -->
+                        <tbody id="data-target"></tbody>
+                    </table>
+                </div>
+                <!-- Rating popup dialog -->
+                <div id="ratingDialog" class="ratingDialog"></div>
+
+                <!-- The search form -->
+                <form class="searchForm" action="">
+                    <div class="ui-widget searchContent">
+                        <label class="searchLabel" for="search">Business Name: </label>
+                        <input type="text" class="searchField" id="searchField" placeholder="Search...">
+                        <input type="button" class="btn searchBtn" id="searchBtn" name="search" value="Search">
+                    </div>
+                </form>
+                <!-- Search error messages i.e empty field or no results found -->
+                <div class="searchError" id="searchError"></div>
+            </div>
+        </section>
+
+        <!-- Start of footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-description">
+                    <p>Developed and Designed by Muhammad Amhan. &copy; 2017</p>
+                </div>
+            </div>
+        </footer>
+        <!-- End of footer -->
+
+        <!-- jQuery Library -->
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <!-- jQuery UI -->
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+        
+        <!-- Main script - methods include:
+         -> getTable() 
+         -> getRating()
+         -> search()
+         -> Using Ajax/jQuery and JSON data format.s
+        -->
+
+        <script>
+            // When document is ready -> page is loaded -> run script.
+            $(document).ready(function() {
+                /* 
+                 * We can use $.getJSON instead of $.get -> in that case data will be automatically converted to JSON.
+                 * In this case using $.get and converting using JSON.parse -> we can also use parseJSON.
+                 */
+
+                //Retrieve the data from the first page only.
+                $.get('https://www.cs.kent.ac.uk/people/staff/lb514/hygiene/hygiene.php',
+                {op: 'retrieve', page: '1'}).done(function(data) {
+                    // Calling the function to display the first page of the data result.
+                    getTable(data);
+                    search();
+                });
+
+                // Retrieve the number of pages and loop through it.
+                $.get('https://www.cs.kent.ac.uk/people/staff/lb514/hygiene/hygiene.php',
+                {op: 'pages'}).done(function(data) {
+                    // Retrieve the number of pages and add a pagination input label.
+                    var pageNumber = JSON.parse(data).pages;
+                    for(var i = 1; i <= pageNumber; i++) {
+                        $('#paginationBtn').append('<input type="button" class="btn paginatorBtn" name="paginator" value="' + i + '">');
+                    }
+
+                    // Invoke the paginator button
+                    $('.paginatorBtn').on('click', function() {
+                        // Highlight current active page.
+                        // Remove class active from all paginatorBtn elements.
+                        $('.paginatorBtn').removeClass("active");
+                        // Add class active to the current object being clicked.
+                        $(this).addClass("active");
+                        // Empty the current data from table.
+                        // Also empty the error message if there is one.
+                        $('#data-target').empty();
+                        $('#searchError').empty();
+                        // Get the new data from the new current page. The keyword this refers to the button object and retrieves the value of it.
+                        $.get('https://www.cs.kent.ac.uk/people/staff/lb514/hygiene/hygiene.php',
+                        {op: 'retrieve', page: $(this).val()}).done(function(data) {
+                            // Show the new data.
+                            getTable(data);
+                            search();
+                        });
+                    });
+                });
+                
+                // Function to display fetched data in a table.
+                function getTable(data) {
+                    // Retrieves the data from php file.
+                    $.each(JSON.parse(data), function(key, value) {
+                        var tableData = '<tr>'
+                        + '<td>' + value.business + '</td>'
+                        + '<td>' + value.address + '</td>'
+                        + '<td>' + value.rating + '</td>'
+                        + '<td>' + value.date + '</td>'
+                        + '<td><input type="button" class="btn ratingBtn" name="rating" value="Get Rating" data-business="' + value.business + '" data-postcode="' + value.postcode + '" data-rating="' + value.ratig + '"></td>'
+                        + '</tr>';
+                        $('#data-target').append(tableData);
+                    });
+                    // Call getRating function.
+                    getRating();
+                }
+
+                // Function to retrieve business hygiene rating by invoking the get rating button.
+                function getRating() {
+                    // Invoke rating button.
+                    $('.ratingBtn').on('click', function() {
+                        var pattern = $(this).attr('data-postcode');
+                        // Retrieve the rating for the current business name.
+                        $.get('https://www.cs.kent.ac.uk/people/staff/lb514/hygiene/rating.php',
+                        {name: $(this).attr('data-business')}).done(function(data){
+                            // Empty the previous data in the dialog.
+                            $('#ratingDialog').empty();
+                            var rating = false;
+                            if (JSON.parse(data).length === 0) {
+                                 $('#ratingDialog').dialog().append('No rating available!');
+                             }
+                             // If there is rating then...
+                             else {
+                                /*
+                                 * 1) Loop through the data and check whether or not the current address matches...
+                                 *    the address the rating button attribute stores for its corresponding row which it was triggered on.
+                                 * 2) .match() checks for the match.
+                                 * 3) .attr() calls the specified attribute in the ratingBtn in the getTable(data) function.
+                                 *    in this case calling the prefix data attribute.
+                                 */
+                                $.each(JSON.parse(data), function(key, value) {
+                                    if (value.address.match(pattern)) {
+                                        var result = '<h3>' + value.business + '</h3>' + '<br> Address: ' + value.address + '<br> Rating: ' + value.rating;
+                                        $('#ratingDialog').dialog().append(result);
+                                        rating = true;
+                                    }
+                                });
+                                if (!rating) {
+                                    $('#ratingDialog').dialog().append('No rating available!');
+                                }
+                             } 
+                        });
+                    });
+                 }
+
+                // Global array to store new searched strings.
+                // Why global? To retain the searched data after a new set of data is called in the table.
+                var businesses = [
+                    "Ancient Raj",
+                    "A La Turka",
+                    "Costa",
+                    "Zizzi"
+                ];
+
+                 // Search function.
+                 function search() {
+                    // Autocomplete - creating an array with 4 default suggestions.
+                     $( function() {
+                        // Calling autocomplete function and specifying the autocomplete data array.
+                        $( "#searchField" ).autocomplete({
+                            source: businesses
+                        });
+                        // Invoking the search button.
+                        $('.searchBtn').on('click', function() {
+                            // Get the search field value.
+                            var searchVal = $('#searchField').val();
+                            $('#searchError').empty();
+                            // Get the result name that matches the search value.
+                            $.get('https://www.cs.kent.ac.uk/people/staff/lb514/hygiene/hygiene.php', 
+                            {op: 'searchname', name: searchVal}).done(function(data){
+                                // Empty the error message on every new click.
+                                $('#searchError').empty();
+                                // If there is a value in the search field.
+                                if(searchVal !== ""){
+                                    // If no data matches the search input value -> print message.
+                                    if(JSON.parse(data).length === 0){
+                                        $('#searchError').append('No search results found for "' + searchVal + '"');
+                                    } else {
+                                        // Otherwise clear the data table and print the search reults.
+                                        $('#data-target').empty();
+                                        getTable(data);
+                                        /*
+                                         * 1) businesses.toString() -> get the String values in the businesses array.
+                                         * 2) includes(value.business) -> if any part of the String inside the array DOES NOT contain the characters of the searched business name (value.business) 
+                                         * 3) If true -> insert the current business name into the array businesses.
+                                         */
+                                        $.each(JSON.parse(data), function(key, value){
+                                            if(!businesses.toString().includes(value.business)) {
+                                                businesses.push(value.business);
+                                            }
+                                        });
+                                    }
+                                 } 
+                                 // If nothing was entered in the search field -> print message.
+                                if (!searchVal) {
+                                    $('#searchError').append('Enter business name to search!');
+                                }
+                            });
+                        });
+                    });
+                 }
+            });
+        </script>
+    </body>
+    <!-- End of body -->
+</html>
